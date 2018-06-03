@@ -1,4 +1,4 @@
-<net.iowaline.dotdash.DotDashKeyboardView
+<com.kunzisoft.keepass.dotdash.KeePassIMEView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/keyboard"
     android:layout_alignParentBottom="true"
