@@ -46,6 +46,7 @@ import com.kunzisoft.keepass.database.ExtraFields;
 import com.kunzisoft.keepass.database.PwDatabase;
 import com.kunzisoft.keepass.database.PwEntry;
 import com.kunzisoft.keepass.database.security.ProtectedString;
+import com.kunzisoft.keepass.dotdash.KeePassIMEStorage;
 import com.kunzisoft.keepass.icons.IconPackChooser;
 import com.kunzisoft.keepass.notifications.NotificationCopyingService;
 import com.kunzisoft.keepass.notifications.NotificationField;
@@ -297,6 +298,12 @@ public class EntryActivity extends LockingHideActivity {
         } else {
             App.getDB().getDrawFactory().assignDatabaseIconTo(this, titleIconView,  mEntry.getIcon());
         }
+
+        // fill IME storage
+        KeePassIMEStorage.setTitle(mEntry.getTitle());
+        KeePassIMEStorage.setUsername(mEntry.getUsername());
+        KeePassIMEStorage.setPassword(mEntry.getPassword());
+        KeePassIMEStorage.setUrl(mEntry.getUrl());
 
 		// Assign title text
         titleView.setText(mEntry.getTitle());

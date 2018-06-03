@@ -305,6 +305,8 @@ public class KeePassIMEService extends InputMethodService implements
 		// Log.d(TAG, "primaryCode: " + Integer.toString(primaryCode));
 		//String curCharMatch = morseMap.get(charInProgress.toString());
 
+		InputConnection ic = getCurrentInputConnection();
+
 		switch (primaryCode) {
 
 			// 0 represents a dot, 1 represents a dash
@@ -312,30 +314,14 @@ public class KeePassIMEService extends InputMethodService implements
 			// able to give a key a string as a keycode, but it
 			// errors out every time I try it.
 			case KeePassIMEKeyboard.KEYCODE_DOT:
+				if (ic != null && KeePassIMEStorage.getUsername() != null) {
+					ic.commitText(KeePassIMEStorage.getUsername(), KeePassIMEStorage.getUsername().length());
+				}
+				break;
 			case KeePassIMEKeyboard.KEYCODE_DASH:
-	
-				if (charInProgress.length() < maxCodeLength) {
-					charInProgress.append(primaryCode == KeePassIMEKeyboard.KEYCODE_DASH ? "-" : ".");
-					updateSpaceKey(true);
+				if (ic != null && KeePassIMEStorage.getPassword() != null) {
+					ic.commitText(KeePassIMEStorage.getPassword(), KeePassIMEStorage.getPassword().length());
 				}
-				
-				if (loaded && isAudio()) {
-					int soundid;
-					if (primaryCode == KeePassIMEKeyboard.KEYCODE_DOT) {
-						soundid = dotSound;
-					} else {
-						soundid = dashSound;
-					}
-
-					AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-					if (!prefs.getBoolean("audioonlyonheadphones", true) || audioManager.isWiredHeadsetOn()) {
-						float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-						float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-						float volume = actualVolume / maxVolume;
-						soundpool.play(soundid, volume, volume, 1, 0, 1f);
-					}
-				}
-
 				// Log.d(TAG, "charInProgress: " + charInProgress);
 				break;
 	
