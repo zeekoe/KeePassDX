@@ -1,9 +1,11 @@
-package net.iowaline.dotdash;
+package com.kunzisoft.keepass.dotdash;
 
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.kunzisoft.keepass.R;
 
 public class DotDashPrefs extends PreferenceActivity {
 

@@ -24,4 +24,6 @@
     <style name="KeepassDXStyle.v21.FabMenu" parent="KeepassDXStyle.TextAppearance.DefaultTextOnPrimary">
         <item name="android:elevation">4dp</item>
     </style>
+
+    <style name="PrefsTheme" parent="@android:style/Theme.DeviceDefault.Settings" />
 </resources>

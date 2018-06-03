@@ -1,4 +1,4 @@
-package net.iowaline.dotdash;
+package com.kunzisoft.keepass.dotdash;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,11 +25,13 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.kunzisoft.keepass.R;
+
 @SuppressLint("ClickableViewAccessibility")
 public class DotDashKeyboardView extends KeyboardView {
 
 	private String TAG = this.getClass().getSimpleName();
-	private DotDashIMEService service;
+	protected DotDashIMEService service;
 	private Dialog cheatsheetDialog;
 	private TableLayout cheatsheet1;
 	private TableLayout cheatsheet2;

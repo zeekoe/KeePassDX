@@ -7,4 +7,6 @@
     <style name="KeepassDXStyle.Night" parent="KeepassDXStyle.Night.v21" >
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14</item>
     </style>
+
+    <style name="PrefsTheme" parent="@android:style/Theme.Holo.Light" />
 </resources>

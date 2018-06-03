@@ -1,4 +1,4 @@
-package net.iowaline.dotdash;
+package com.kunzisoft.keepass.dotdash;
 
 import java.io.FileDescriptor;
 import java.util.Hashtable;
@@ -21,6 +21,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
+
+import com.kunzisoft.keepass.R;
 
 public class DotDashIMEService extends InputMethodService implements
 	KeyboardView.OnKeyboardActionListener, OnSharedPreferenceChangeListener {
@@ -225,17 +227,6 @@ public class DotDashIMEService extends InputMethodService implements
 	}
 
 	private void loadSoundPool() {
-		soundpool = new SoundPool(1, AudioManager.STREAM_SYSTEM, 0);
-		soundpool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-			
-			@Override
-			public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-				loaded = true;
-			}
-		});
-		AssetFileDescriptor fd = getResources().openRawResourceFd(R.raw.tone800hz);
-		dotSound = soundpool.load(fd.getFileDescriptor(), fd.getStartOffset(), (long)(fd.getLength() * 0.1), 1);
-		dashSound = soundpool.load(fd.getFileDescriptor(), fd.getStartOffset(), (long)(fd.getLength() * 0.3), 1);
 	}
 	
 	@SuppressLint("InflateParams")
@@ -409,7 +400,7 @@ public class DotDashIMEService extends InputMethodService implements
 	}
 
 	public boolean isAudio() {
-		return prefs.getBoolean("audio", false);
+		return false;
 	}
 
 	public void commitCodeGroup(boolean refreshScreen) {

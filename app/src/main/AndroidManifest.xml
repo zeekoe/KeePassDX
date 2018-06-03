@@ -152,5 +152,26 @@
             </intent-filter>
         </service>
         <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
+
+        <service
+            android:name=".dotdash.KeepassIMEService"
+            android:permission="android.permission.BIND_INPUT_METHOD"
+            >
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
+        </service>
+
+        <activity
+            android:label="@string/app_name"
+            android:name=".dotdash.DotDashPrefs"
+            android:theme="@style/PrefsTheme"
+            >
+
+        </activity>
+
     </application>
 </manifest> 

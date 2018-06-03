@@ -1,4 +1,4 @@
-package net.iowaline.dotdash;
+package com.kunzisoft.keepass.dotdash;
 
 import android.content.Context;
 import android.content.res.Resources;
