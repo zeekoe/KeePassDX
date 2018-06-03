@@ -28,10 +28,10 @@ import android.widget.TextView;
 import com.kunzisoft.keepass.R;
 
 @SuppressLint("ClickableViewAccessibility")
-public class DotDashKeyboardView extends KeyboardView {
+public class KeePassIMEView extends KeyboardView {
 
 	private String TAG = this.getClass().getSimpleName();
-	protected DotDashIMEService service;
+	protected KeePassIMEService service;
 	private Dialog cheatsheetDialog;
 	private TableLayout cheatsheet1;
 	private TableLayout cheatsheet2;
@@ -77,7 +77,7 @@ public class DotDashKeyboardView extends KeyboardView {
 							return true;
 						}
 						
-						if (repeatkey == service.dotDashKeyboard.leftDotdashKey || repeatkey == service.dotDashKeyboard.rightDotdashKey) {
+						if (repeatkey == service.keePassIMEKeyboard.leftDotdashKey || repeatkey == service.keePassIMEKeyboard.rightDotdashKey) {
 							
 						} else {
 							getOnKeyboardActionListener().onKey(repeatkey.codes[0], repeatkey.codes);
@@ -87,31 +87,31 @@ public class DotDashKeyboardView extends KeyboardView {
 					case MSG_IAMBIC_PLAYING:
 						Keyboard.Key lastkeysent = (Keyboard.Key) msg.obj;
 						Keyboard.Key nextkeytosend = null;
-						boolean leftkeypressed = service.dotDashKeyboard.leftDotdashKey.pressed;
-						boolean rightkeypressed = service.dotDashKeyboard.rightDotdashKey.pressed;
+						boolean leftkeypressed = service.keePassIMEKeyboard.leftDotdashKey.pressed;
+						boolean rightkeypressed = service.keePassIMEKeyboard.rightDotdashKey.pressed;
 						
 						// Iambic signal has just ended. Check to see if dot and/or dash are still held down
 						if (leftkeypressed && rightkeypressed) {
 							// Both are pressed, so send the opposite signal from what we just sent
-							if (lastkeysent == service.dotDashKeyboard.leftDotdashKey) {
-								nextkeytosend = service.dotDashKeyboard.rightDotdashKey;
+							if (lastkeysent == service.keePassIMEKeyboard.leftDotdashKey) {
+								nextkeytosend = service.keePassIMEKeyboard.rightDotdashKey;
 							} else {
-								nextkeytosend = service.dotDashKeyboard.leftDotdashKey;
+								nextkeytosend = service.keePassIMEKeyboard.leftDotdashKey;
 							}
 						} else if (leftkeypressed || rightkeypressed) {
 							// Only one is pressed. Send its signal.
 							if (leftkeypressed) {
-								nextkeytosend = service.dotDashKeyboard.leftDotdashKey;
+								nextkeytosend = service.keePassIMEKeyboard.leftDotdashKey;
 							} else {
-								nextkeytosend = service.dotDashKeyboard.rightDotdashKey;
+								nextkeytosend = service.keePassIMEKeyboard.rightDotdashKey;
 							}
 							iambic_both_pressed = false;
 						} else if (service.iambicmodeb && iambic_both_pressed) {
 							// Mode b. Send one more signal, with the opposite of the last key
-							if (lastkeysent == service.dotDashKeyboard.leftDotdashKey) {
-								nextkeytosend = service.dotDashKeyboard.rightDotdashKey;
+							if (lastkeysent == service.keePassIMEKeyboard.leftDotdashKey) {
+								nextkeytosend = service.keePassIMEKeyboard.rightDotdashKey;
 							} else {
-								nextkeytosend = service.dotDashKeyboard.leftDotdashKey;
+								nextkeytosend = service.keePassIMEKeyboard.leftDotdashKey;
 							}
 							iambic_both_pressed = false;
 						}
@@ -119,19 +119,19 @@ public class DotDashKeyboardView extends KeyboardView {
 						if (nextkeytosend != null) {
 							getOnKeyboardActionListener().onKey(nextkeytosend.codes[0], nextkeytosend.codes);
 							handler.sendMessageDelayed(handler.obtainMessage(MSG_IAMBIC_PLAYING, nextkeytosend),
-									DotDashKeyboardView.get_iambic_delay(nextkeytosend));
+									KeePassIMEView.get_iambic_delay(nextkeytosend));
 						} else {
 							// Iambic is done, so start the autocommit timer.
 							if (service.autocommit) {
-								long delay = DotDashKeyboardView.AUTOCOMMIT_DELAY;
+								long delay = KeePassIMEView.AUTOCOMMIT_DELAY;
 								// If audio is playing, we want to wait until the end of the tone before
 								// we start counting down for autocommit.
 								if (service.isAudio()) {
-									delay += DotDashKeyboardView.get_iambic_delay(lastkeysent);
+									delay += KeePassIMEView.get_iambic_delay(lastkeysent);
 								}
-								handler.removeMessages(DotDashKeyboardView.MSG_AUTOCOMMIT);
+								handler.removeMessages(KeePassIMEView.MSG_AUTOCOMMIT);
 								handler.sendMessageDelayed(
-										handler.obtainMessage(DotDashKeyboardView.MSG_AUTOCOMMIT),
+										handler.obtainMessage(KeePassIMEView.MSG_AUTOCOMMIT),
 										delay
 								);
 							}
@@ -147,16 +147,16 @@ public class DotDashKeyboardView extends KeyboardView {
 		}
 	);
 
-	public void setService(DotDashIMEService service) {
+	public void setService(KeePassIMEService service) {
 		this.service = service;
 	}
 
-	public DotDashKeyboardView(Context context, AttributeSet attrs) {
+	public KeePassIMEView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setEverythingUp();
 	}
 
-	public DotDashKeyboardView(Context context, AttributeSet attrs, int defStyle) {
+	public KeePassIMEView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		setEverythingUp();
 	}
@@ -236,12 +236,12 @@ public class DotDashKeyboardView extends KeyboardView {
 	}
 
 	private void toggleKeyboard() {
-		if (getKeyboard() == service.dotDashKeyboard) {
+		if (getKeyboard() == service.keePassIMEKeyboard) {
 			setKeyboard(service.utilityKeyboard);
 			// TODO: Make this work. I think it's a layout issue...
 //			setPreviewEnabled(true);
 		} else {
-			setKeyboard(service.dotDashKeyboard);
+			setKeyboard(service.keePassIMEKeyboard);
 //			setPreviewEnabled(false);
 		}
 	}
@@ -306,7 +306,7 @@ public class DotDashKeyboardView extends KeyboardView {
 	 */
 	public void prettifyCheatSheet(TableLayout cheatsheet) {
 		// No action necessary.
-		if (service.ditdahcharsPref == DotDashIMEService.DITDAHCHARS_UNICODE) {
+		if (service.ditdahcharsPref == KeePassIMEService.DITDAHCHARS_UNICODE) {
 			return;
 		}
 		
@@ -350,7 +350,7 @@ public class DotDashKeyboardView extends KeyboardView {
 
 		String newCode = service.getText(R.string.newline_disabled).toString();
 		if (service.newlineGroups != null && service.newlineGroups.length > 0) {
-			newCode = service.newlineGroups[0].replace(".", DotDashIMEService.UNICODE_DOT).replace("-",  DotDashIMEService.UNICODE_DASH);
+			newCode = service.newlineGroups[0].replace(".", KeePassIMEService.UNICODE_DOT).replace("-",  KeePassIMEService.UNICODE_DASH);
 		}
 		((TextView) cheatsheet2.findViewById(R.id.newline_code))
 				.setText(newCode);
@@ -358,7 +358,7 @@ public class DotDashKeyboardView extends KeyboardView {
 
 	public int whichKeyboard() {
 		Keyboard kbd = getKeyboard();
-		if (kbd == service.dotDashKeyboard) {
+		if (kbd == service.keePassIMEKeyboard) {
 			return KBD_DOTDASH;
 		} else if (kbd == service.utilityKeyboard) {
 			return KBD_UTILITY;
@@ -386,7 +386,7 @@ public class DotDashKeyboardView extends KeyboardView {
 		}
 
 		// Let KeyboardView handle the utility keyboard. 
-		if (whichKeyboard() == DotDashKeyboardView.KBD_UTILITY) {
+		if (whichKeyboard() == KeePassIMEView.KBD_UTILITY) {
 			return super.onTouchEvent(me);
 		}
 
@@ -399,10 +399,10 @@ public class DotDashKeyboardView extends KeyboardView {
 			// Find out which key the pointer is on
 			int x = (int) me.getX(i);
 			int y = (int) me.getY(i);
-			int[] keys = service.dotDashKeyboard.getNearestKeys(x, y);
+			int[] keys = service.keePassIMEKeyboard.getNearestKeys(x, y);
 			Keyboard.Key touchedKey = null;
 			for (int k : keys) {
-				Keyboard.Key key = service.dotDashKeyboard.getKeys().get(k);
+				Keyboard.Key key = service.keePassIMEKeyboard.getKeys().get(k);
 				// TODO: This continues to detect it even after you've moved off the keyboard. :-P
 				if (key.isInside(x, y)) {
 					touchedKey = key;
@@ -455,25 +455,25 @@ public class DotDashKeyboardView extends KeyboardView {
 
 			getOnKeyboardActionListener().onPress(k.codes[0]);
 
-			if (service.iambic && (k == service.dotDashKeyboard.leftDotdashKey || k == service.dotDashKeyboard.rightDotdashKey)) {
+			if (service.iambic && (k == service.keePassIMEKeyboard.leftDotdashKey || k == service.keePassIMEKeyboard.rightDotdashKey)) {
 				// In iambic mode, we only process the key if there's not already a signal going
 				// What matters is in the message handler, where we check the state of the keys
 				// when the current message ends.
 				//
 				// TODO: Actually... it might make more sense if the iambic timing was
-				// over in DotDashIMEService, using the onPress() method to trigger it.
+				// over in KeePassIMEService, using the onPress() method to trigger it.
 				if (!handler.hasMessages(MSG_IAMBIC_PLAYING)) {
 					getOnKeyboardActionListener().onKey(k.codes[0], k.codes);
 					
 					handler.sendMessageDelayed(
 							handler.obtainMessage(MSG_IAMBIC_PLAYING, k),
-							DotDashKeyboardView.get_iambic_delay(k)
+							KeePassIMEView.get_iambic_delay(k)
 					);
 				}
 				
 				// Iambic mode B needs to know if both keys got pressed simultaneously while an Iambic message
 				// was in progress.
-				if (service.iambicmodeb && service.dotDashKeyboard.leftDotdashKey.pressed && service.dotDashKeyboard.rightDotdashKey.pressed) {
+				if (service.iambicmodeb && service.keePassIMEKeyboard.leftDotdashKey.pressed && service.keePassIMEKeyboard.rightDotdashKey.pressed) {
 					this.iambic_both_pressed = true;
 				}
 			} else {
@@ -487,7 +487,7 @@ public class DotDashKeyboardView extends KeyboardView {
 				}
 			}
 			
-			invalidateKey(service.dotDashKeyboard.getKeys().indexOf(k));
+			invalidateKey(service.keePassIMEKeyboard.getKeys().indexOf(k));
 		}
 		
 		// Keys that are in pressedKeys but not curPressedKeys
@@ -504,27 +504,27 @@ public class DotDashKeyboardView extends KeyboardView {
 			if (k.repeatable) {
 				handler.removeMessages(MSG_KEY_REPEAT, k);
 			}
-			this.bouncewaits.put(k, SystemClock.elapsedRealtime() + DotDashKeyboardView.DEBOUNCE_TIMEOUT);
-			invalidateKey(service.dotDashKeyboard.getKeys().indexOf(k));
+			this.bouncewaits.put(k, SystemClock.elapsedRealtime() + KeePassIMEView.DEBOUNCE_TIMEOUT);
+			invalidateKey(service.keePassIMEKeyboard.getKeys().indexOf(k));
 			
 			// If we're not in iambic mode, then the release of a key is probably a decent time to start
 			// the autocommit timer.
 			if (
 					!service.iambic 
 					&& service.isAudio()
-					&& (k == service.dotDashKeyboard.leftDotdashKey || k == service.dotDashKeyboard.rightDotdashKey)
-					&& service.dotDashKeyboard.leftDotdashKey.pressed == false
-					&& service.dotDashKeyboard.rightDotdashKey.pressed == false
+					&& (k == service.keePassIMEKeyboard.leftDotdashKey || k == service.keePassIMEKeyboard.rightDotdashKey)
+					&& service.keePassIMEKeyboard.leftDotdashKey.pressed == false
+					&& service.keePassIMEKeyboard.rightDotdashKey.pressed == false
 			) {
-				long delay = DotDashKeyboardView.AUTOCOMMIT_DELAY;
+				long delay = KeePassIMEView.AUTOCOMMIT_DELAY;
 				// If audio is playing, we want to wait until the end of the tone before
 				// we start counting down for autocommit.
 				if (service.isAudio()) {
-					delay += DotDashKeyboardView.get_iambic_delay(k);
+					delay += KeePassIMEView.get_iambic_delay(k);
 				}
-				handler.removeMessages(DotDashKeyboardView.MSG_AUTOCOMMIT);
+				handler.removeMessages(KeePassIMEView.MSG_AUTOCOMMIT);
 				handler.sendMessageDelayed(
-						handler.obtainMessage(DotDashKeyboardView.MSG_AUTOCOMMIT),
+						handler.obtainMessage(KeePassIMEView.MSG_AUTOCOMMIT),
 						delay
 				);
 			}
@@ -532,7 +532,7 @@ public class DotDashKeyboardView extends KeyboardView {
 		
 		pressedKeys = curPressedKeys;
 
-		for (Keyboard.Key k : service.dotDashKeyboard.getKeys()) {
+		for (Keyboard.Key k : service.keePassIMEKeyboard.getKeys()) {
 			Log.d(TAG, "Key " + String.valueOf(k.codes[0]) + " " + (k.pressed ? "down" : "up"));
 		}
 
@@ -540,7 +540,7 @@ public class DotDashKeyboardView extends KeyboardView {
 	}
 	
 	public static long get_iambic_delay(Keyboard.Key k) {
-		if (k.codes[0] == DotDashKeyboard.KEYCODE_DOT) {
+		if (k.codes[0] == KeePassIMEKeyboard.KEYCODE_DOT) {
 			// a dot and the space after it
 			return IAMBIC_DOTLENGTH * 2;
 		} else {

@@ -6,17 +6,17 @@ import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 
-public class DotDashKeyboard extends Keyboard {
+public class KeePassIMEKeyboard extends Keyboard {
 
 	public static final int KEYCODE_DOT = 0;
 	public static final int KEYCODE_DASH = 1;
 	
-	public DotDashKeyboard(Context context, int xmlLayoutResId) {
+	public KeePassIMEKeyboard(Context context, int xmlLayoutResId) {
 		super(context, xmlLayoutResId);
 	}
 
-	public DotDashKeyboard(Context context, int layoutTemplateResId,
-			CharSequence characters, int columns, int horizontalPadding) {
+	public KeePassIMEKeyboard(Context context, int layoutTemplateResId,
+							  CharSequence characters, int columns, int horizontalPadding) {
 		super(context, layoutTemplateResId, characters, columns,
 				horizontalPadding);
 	}
@@ -57,7 +57,7 @@ public class DotDashKeyboard extends Keyboard {
 	 * @return boolean True if the keys changed position
 	 */
 	public boolean setupDotDashKeys(boolean dashkeyonleft) {
-		if (dashkeyonleft != (leftDotdashKey.codes[0] == DotDashKeyboard.KEYCODE_DASH)) {
+		if (dashkeyonleft != (leftDotdashKey.codes[0] == KeePassIMEKeyboard.KEYCODE_DASH)) {
 			// Swap 'em!
 			int[] code_tmp = leftDotdashKey.codes;
 			leftDotdashKey.codes = rightDotdashKey.codes;

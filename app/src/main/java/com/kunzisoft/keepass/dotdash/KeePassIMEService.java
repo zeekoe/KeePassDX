@@ -1,6 +1,5 @@
 package com.kunzisoft.keepass.dotdash;
 
-import java.io.FileDescriptor;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -8,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.AssetFileDescriptor;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -24,11 +22,11 @@ import android.view.inputmethod.InputConnection;
 
 import com.kunzisoft.keepass.R;
 
-public class DotDashIMEService extends InputMethodService implements
+public class KeePassIMEService extends InputMethodService implements
 	KeyboardView.OnKeyboardActionListener, OnSharedPreferenceChangeListener {
-//	private String TAG = "DotDashIMEService";
-	private DotDashKeyboardView inputView;
-	public DotDashKeyboard dotDashKeyboard;
+//	private String TAG = "KeePassIMEService";
+	private KeePassIMEView inputView;
+	public KeePassIMEKeyboard keePassIMEKeyboard;
 	public Keyboard utilityKeyboard;
 	private Keyboard.Key spaceKey;
 	int spaceKeyIndex;
@@ -97,7 +95,7 @@ public class DotDashIMEService extends InputMethodService implements
 		// http://stackoverflow.com/questions/4371273/should-accessing-sharedpreferences-be-done-off-the-ui-thread
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		this.prefs.registerOnSharedPreferenceChangeListener(this);
-		this.ditdahcharsPref = Integer.valueOf(this.prefs.getString(DotDashPrefs.DITDAHCHARS, Integer.toString(DITDAHCHARS_UNICODE)));
+		this.ditdahcharsPref = Integer.valueOf(this.prefs.getString(KeePassIMEPrefs.DITDAHCHARS, Integer.toString(DITDAHCHARS_UNICODE)));
 		this.iambic = this.prefs.getBoolean("iambic", false);
 		this.iambicmodeb = this.prefs.getBoolean("iambicmodeb", false);
 		this.autocommit = this.prefs.getBoolean("autocommit", false);
@@ -195,7 +193,7 @@ public class DotDashIMEService extends InputMethodService implements
 	 */
 	private boolean setupUtilityKeyboard() {
 		boolean nullBefore = (utilityKeyboard == null);
-		if (this.prefs.getBoolean(DotDashPrefs.DASHKEYONLEFT, false)) {
+		if (this.prefs.getBoolean(KeePassIMEPrefs.DASHKEYONLEFT, false)) {
 			utilityKeyboard = new Keyboard(this, R.xml.utilitykeyboard); 
 		} else {
 			utilityKeyboard = null;
@@ -213,12 +211,12 @@ public class DotDashIMEService extends InputMethodService implements
 		// TODO Auto-generated method stub
 		super.onInitializeInterface();
 		this.setupUtilityKeyboard();
-		dotDashKeyboard = new DotDashKeyboard(this, R.xml.dotdash);
-		dotDashKeyboard.setupDotDashKeys(this.prefs.getBoolean(DotDashPrefs.DASHKEYONLEFT, false));
+		keePassIMEKeyboard = new KeePassIMEKeyboard(this, R.xml.dotdash);
+		keePassIMEKeyboard.setupDotDashKeys(this.prefs.getBoolean(KeePassIMEPrefs.DASHKEYONLEFT, false));
 		
-		spaceKey = dotDashKeyboard.spaceKey;
-		capsLockKey = dotDashKeyboard.capsLockKey;
-		List<Keyboard.Key> keys = dotDashKeyboard.getKeys();
+		spaceKey = keePassIMEKeyboard.spaceKey;
+		capsLockKey = keePassIMEKeyboard.capsLockKey;
+		List<Keyboard.Key> keys = keePassIMEKeyboard.getKeys();
 		spaceKeyIndex = keys.indexOf(spaceKey);
 		capsLockKeyIndex = keys.indexOf(capsLockKey);
 		if (isAudio()) {
@@ -232,21 +230,21 @@ public class DotDashIMEService extends InputMethodService implements
 	@SuppressLint("InflateParams")
 	@Override
 	public View onCreateInputView() {
-		inputView = (DotDashKeyboardView) getLayoutInflater().inflate(
+		inputView = (KeePassIMEView) getLayoutInflater().inflate(
 				R.layout.input, null);
 		inputView.setOnKeyboardActionListener(this);
-		inputView.setKeyboard(dotDashKeyboard);
+		inputView.setKeyboard(keePassIMEKeyboard);
 		inputView.setService(this);
 		inputView.mEnableUtilityKeyboard = prefs.getBoolean(
-				DotDashPrefs.ENABLEUTILKBD, false);
+				KeePassIMEPrefs.ENABLEUTILKBD, false);
 		return inputView;
 	}
 
 	public void onKey(int primaryCode, int[] keyCodes) {
 		int kbd = inputView.whichKeyboard();
-		if (kbd == DotDashKeyboardView.KBD_DOTDASH) {
+		if (kbd == KeePassIMEView.KBD_DOTDASH) {
 			onKeyMorse(primaryCode, keyCodes);
-		} else if (kbd == DotDashKeyboardView.KBD_UTILITY) {
+		} else if (kbd == KeePassIMEView.KBD_UTILITY) {
 			onKeyUtility(primaryCode, keyCodes);
 		}
 	}
@@ -313,17 +311,17 @@ public class DotDashIMEService extends InputMethodService implements
 			// TODO The documentation for Keyboard.Key says I should be
 			// able to give a key a string as a keycode, but it
 			// errors out every time I try it.
-			case DotDashKeyboard.KEYCODE_DOT:
-			case DotDashKeyboard.KEYCODE_DASH:
+			case KeePassIMEKeyboard.KEYCODE_DOT:
+			case KeePassIMEKeyboard.KEYCODE_DASH:
 	
 				if (charInProgress.length() < maxCodeLength) {
-					charInProgress.append(primaryCode == DotDashKeyboard.KEYCODE_DASH ? "-" : ".");
+					charInProgress.append(primaryCode == KeePassIMEKeyboard.KEYCODE_DASH ? "-" : ".");
 					updateSpaceKey(true);
 				}
 				
 				if (loaded && isAudio()) {
 					int soundid;
-					if (primaryCode == DotDashKeyboard.KEYCODE_DOT) {
+					if (primaryCode == KeePassIMEKeyboard.KEYCODE_DOT) {
 						soundid = dotSound;
 					} else {
 						soundid = dashSound;
@@ -344,15 +342,15 @@ public class DotDashIMEService extends InputMethodService implements
 			// Space button ends the current dotdash sequence
 			// Space twice in a row sends through a standard space character
 			case KeyEvent.KEYCODE_SPACE:
-				inputView.handler.removeMessages(DotDashKeyboardView.MSG_AUTOCOMMIT);
-				inputView.handler.removeMessages(DotDashKeyboardView.MSG_IAMBIC_PLAYING);
+				inputView.handler.removeMessages(KeePassIMEView.MSG_AUTOCOMMIT);
+				inputView.handler.removeMessages(KeePassIMEView.MSG_IAMBIC_PLAYING);
 				inputView.iambic_both_pressed = false;
 				
 				if (charInProgress.length() == 0) {
 					getCurrentInputConnection().commitText(" ", 1);
 	
 					if (autoCapState == AUTO_CAP_SENTENCE_ENDED
-							&& prefs.getBoolean(DotDashPrefs.AUTOCAP, false)) {
+							&& prefs.getBoolean(KeePassIMEPrefs.AUTOCAP, false)) {
 						capsLockState = CAPS_LOCK_NEXT;
 						updateCapsLockKey(true);
 					}
@@ -364,8 +362,8 @@ public class DotDashIMEService extends InputMethodService implements
 			// If there's a character in progress, clear it
 			// otherwise, send through a backspace keypress
 			case KeyEvent.KEYCODE_DEL:
-				inputView.handler.removeMessages(DotDashKeyboardView.MSG_AUTOCOMMIT);
-				inputView.handler.removeMessages(DotDashKeyboardView.MSG_IAMBIC_PLAYING);
+				inputView.handler.removeMessages(KeePassIMEView.MSG_AUTOCOMMIT);
+				inputView.handler.removeMessages(KeePassIMEView.MSG_IAMBIC_PLAYING);
 				inputView.iambic_both_pressed = false;
 
 				if (charInProgress.length() > 0) {
@@ -585,23 +583,23 @@ public class DotDashIMEService extends InputMethodService implements
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		if (key.contentEquals(DotDashPrefs.NEWLINECODE)) {
+		if (key.contentEquals(KeePassIMEPrefs.NEWLINECODE)) {
 			updateNewlinePref();
-		} else if (key.contentEquals(DotDashPrefs.ENABLEUTILKBD)) {
+		} else if (key.contentEquals(KeePassIMEPrefs.ENABLEUTILKBD)) {
 			this.setupUtilityKeyboard();
 			if (this.inputView != null) {
 				inputView.mEnableUtilityKeyboard = prefs.getBoolean(key, false);
 				if (!prefs.getBoolean(key, false)) {
-					inputView.setKeyboard(dotDashKeyboard);
+					inputView.setKeyboard(keePassIMEKeyboard);
 				}
 			}
-		} else if (key.contentEquals(DotDashPrefs.DITDAHCHARS)) {
-			this.ditdahcharsPref = Integer.valueOf(this.prefs.getString(DotDashPrefs.DITDAHCHARS, Integer.toString(DITDAHCHARS_UNICODE)));
+		} else if (key.contentEquals(KeePassIMEPrefs.DITDAHCHARS)) {
+			this.ditdahcharsPref = Integer.valueOf(this.prefs.getString(KeePassIMEPrefs.DITDAHCHARS, Integer.toString(DITDAHCHARS_UNICODE)));
 			if (inputView != null) {
 				inputView.clearCheatSheet();
 			}
-		} else if (key.contentEquals(DotDashPrefs.DASHKEYONLEFT)) {
-			boolean changed = this.dotDashKeyboard.setupDotDashKeys(this.prefs.getBoolean(key, false));
+		} else if (key.contentEquals(KeePassIMEPrefs.DASHKEYONLEFT)) {
+			boolean changed = this.keePassIMEKeyboard.setupDotDashKeys(this.prefs.getBoolean(key, false));
 			if (changed && this.inputView != null) {
 				this.inputView.invalidateAllKeys();
 			}
@@ -643,9 +641,9 @@ public class DotDashIMEService extends InputMethodService implements
 		// Add the new ones
 		// TODO: When we make the morse codes into XML, this'll have to be
 		// updated
-		String rawpref = this.prefs.getString(DotDashPrefs.NEWLINECODE, ".-.-");
+		String rawpref = this.prefs.getString(KeePassIMEPrefs.NEWLINECODE, ".-.-");
 		// Log.d(TAG, "rawpref: "+rawpref);
-		if (rawpref.contentEquals(DotDashPrefs.NEWLINECODE_NONE)) {
+		if (rawpref.contentEquals(KeePassIMEPrefs.NEWLINECODE_NONE)) {
 			newlineGroups = null;
 		} else {
 			newlineGroups = rawpref.split("\\|");
@@ -686,7 +684,7 @@ public class DotDashIMEService extends InputMethodService implements
 		}
 
 		// Don't bother with any of this is autocap is turned off
-		if (!prefs.getBoolean(DotDashPrefs.AUTOCAP, false)) {
+		if (!prefs.getBoolean(KeePassIMEPrefs.AUTOCAP, false)) {
 			return;
 		}
 
@@ -713,8 +711,8 @@ public class DotDashIMEService extends InputMethodService implements
 	 */
 	protected String convertDitDahAsciiToUnicode(String ascii) {
 		return ascii
-				.replace(".", DotDashIMEService.UNICODE_DOT)
-				.replace("-", DotDashIMEService.UNICODE_DASH);
+				.replace(".", KeePassIMEService.UNICODE_DOT)
+				.replace("-", KeePassIMEService.UNICODE_DASH);
 	}
 	
 	/**
@@ -726,8 +724,8 @@ public class DotDashIMEService extends InputMethodService implements
 	 */
 	protected String convertDitDahUnicodeToAscii(String unicode, boolean padding) {
 		return unicode
-				.replace(DotDashIMEService.UNICODE_DOT, (padding ? ". " : "."))
-				.replace(DotDashIMEService.UNICODE_DASH, (padding ? "- " : "-"))
+				.replace(KeePassIMEService.UNICODE_DOT, (padding ? ". " : "."))
+				.replace(KeePassIMEService.UNICODE_DASH, (padding ? "- " : "-"))
 				.trim();
 	}
 }

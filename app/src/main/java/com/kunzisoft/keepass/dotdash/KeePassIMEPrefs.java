@@ -7,7 +7,7 @@ import android.preference.PreferenceActivity;
 
 import com.kunzisoft.keepass.R;
 
-public class DotDashPrefs extends PreferenceActivity {
+public class KeePassIMEPrefs extends PreferenceActivity {
 
 	public static final String AUTOCAP = "autocap";
 	public static final String NEWLINECODE = "newline";
