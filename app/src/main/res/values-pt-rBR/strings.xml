@@ -23,7 +23,7 @@
 <resources>
     <string name="about_feedback">Comentários:</string>
     <string name="about_homepage">Página inicial:</string>
-    <string name="AboutText">KeePass DX é uma implementação do gerenciador de senhas KeePass.</string>
+    <string name="about_description">KeePass DX é uma implementação do gerenciador de senhas KeePass.</string>
     <string name="accept">Aceitar</string>
     <string name="add_entry">Adicionar entrada</string>
     <string name="add_group">Adicionar grupo</string>
@@ -35,7 +35,7 @@
     <string name="brackets">Parênteses</string>
     <string name="browser_intall_text">Navegação em arquivos requer o gerenciador de arquivos Open Intents, clique abaixo para instalar. Devido a algumas peculiaridades no gerenciador de arquivos, a navegação pode não funcionar na primeira vez.</string>
     <string name="cancel">Cancelar</string>
-    <string name="ClearClipboard">Clipboard limpo.</string>
+    <string name="clipboard_cleared">Clipboard limpo.</string>
     <string name="clipboard_timeout">Tempo limite para o clipboard</string>
     <string name="clipboard_timeout_summary">Tempo até limpar o clipboard após copiar usuário ou senha.</string>
     <string name="select_to_copy">Copiar %1$s para o clipboard</string>

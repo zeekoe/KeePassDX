@@ -20,6 +20,7 @@
 package com.kunzisoft.keepass.settings;
 
 import android.app.Activity;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,14 +29,13 @@ import android.view.MenuItem;
 
 import com.kunzisoft.keepass.R;
 import com.kunzisoft.keepass.activities.LockingActivity;
-import com.kunzisoft.keepass.compat.BackupManagerCompat;
 
 
 public class SettingsActivity extends LockingActivity implements MainPreferenceFragment.Callback {
 
     private static final String TAG_NESTED = "TAG_NESTED";
 
-	private BackupManagerCompat backupManager;
+	private BackupManager backupManager;
 
     private Toolbar toolbar;
 
@@ -78,7 +78,7 @@ public class SettingsActivity extends LockingActivity implements MainPreferenceF
                     .commit();
         }
 
-		backupManager = new BackupManagerCompat(this);
+		backupManager = new BackupManager(this);
 	}
 
     @Override
@@ -112,8 +112,8 @@ public class SettingsActivity extends LockingActivity implements MainPreferenceF
 	@Override
 	public void onNestedPreferenceSelected(NestedSettingsFragment.Screen key) {
 		getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
-                        R.anim.slide_in_left, R.anim.slide_out_right)
+                .setCustomAnimations(R.anim.slide_alpha_in_right, R.anim.slide_alpha_out_left,
+                        R.anim.slide_alpha_in_left, R.anim.slide_alpha_out_right)
 				.replace(R.id.fragment_container, NestedSettingsFragment.newInstance(key), TAG_NESTED)
                 .addToBackStack(TAG_NESTED)
                 .commit();

@@ -37,20 +37,23 @@ public class PwIconFactory {
 	 */
 	private ReferenceMap customCache = new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.WEAK);
 
-	public PwIconStandard getFirstIcon() {
-		return getIcon(0);
+	public PwIconStandard getKeyIcon() {
+		return getIcon(PwIconStandard.KEY);
 	}
+
+	public PwIconStandard getTrashIcon() {
+		return getIcon(PwIconStandard.TRASH);
+	}
+
+    public PwIconStandard getFolderIcon() {
+        return getIcon(PwIconStandard.FOLDER);
+    }
 
 	public PwIconStandard getIcon(int iconId) {
 		PwIconStandard icon = (PwIconStandard) cache.get(iconId);
 		
 		if (icon == null) {
-			if (iconId == 1) {
-				icon = PwIconStandard.FIRST;
-			}
-			else {
-				icon = new PwIconStandard(iconId);
-			}
+			icon = new PwIconStandard(iconId);
 			cache.put(iconId, icon);
 		}
 		

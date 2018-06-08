@@ -92,12 +92,12 @@ public class ImporterV4 extends Importer {
 	public PwDatabaseV4 openDatabase(InputStream inStream, String password,
 			InputStream keyInputStream) throws IOException, InvalidDBException {
 
-		return openDatabase(inStream, password, keyInputStream, null, 0);
+		return openDatabase(inStream, password, keyInputStream, null);
 	}
 	
 	@Override
     public PwDatabaseV4 openDatabase(InputStream inStream, String password,
-									 InputStream keyInputStream, ProgressTaskUpdater progressTaskUpdater, long roundsFix) throws IOException,
+									 InputStream keyInputStream, ProgressTaskUpdater progressTaskUpdater) throws IOException,
             InvalidDBException {
 
 		if (progressTaskUpdater != null)
@@ -114,7 +114,7 @@ public class ImporterV4 extends Importer {
 		pbHeader = hh.header;
 
 		db.retrieveMasterKey(password, keyInputStream);
-		db.makeFinalKey(header.masterSeed, roundsFix);
+		db.makeFinalKey(header.masterSeed);
 
 		if (progressTaskUpdater != null)
 			progressTaskUpdater.updateMessage(R.string.decrypting_db);
@@ -125,14 +125,8 @@ public class ImporterV4 extends Importer {
 			db.setDataEngine(engine);
 			db.setEncryptionAlgorithm(engine.getPwEncryptionAlgorithm());
 			cipher = engine.getCipher(Cipher.DECRYPT_MODE, db.getFinalKey(), header.encryptionIV);
-		} catch (NoSuchAlgorithmException e) {
-			throw new IOException("Invalid algorithm.");
-		} catch (NoSuchPaddingException e) {
-			throw new IOException("Invalid algorithm.");
-		} catch (InvalidKeyException e) {
-			throw new IOException("Invalid algorithm.");
-		} catch (InvalidAlgorithmParameterException e) {
-			throw new IOException("Invalid algorithm.");
+		} catch (NoSuchAlgorithmException|NoSuchPaddingException|InvalidKeyException|InvalidAlgorithmParameterException e) {
+			throw new IOException("Invalid algorithm.", e);
 		}
 
 		InputStream isPlain;

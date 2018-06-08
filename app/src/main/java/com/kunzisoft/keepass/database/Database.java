@@ -20,18 +20,14 @@
 package com.kunzisoft.keepass.database;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.kunzisoft.keepass.R;
 import com.kunzisoft.keepass.crypto.keyDerivation.KdfEngine;
 import com.kunzisoft.keepass.crypto.keyDerivation.KdfFactory;
 import com.kunzisoft.keepass.database.exception.ContentFileNotFoundException;
 import com.kunzisoft.keepass.database.exception.InvalidDBException;
-import com.kunzisoft.keepass.database.exception.InvalidPasswordException;
 import com.kunzisoft.keepass.database.exception.PwDbOutputException;
 import com.kunzisoft.keepass.database.load.Importer;
 import com.kunzisoft.keepass.database.load.ImporterFactory;
@@ -51,6 +47,9 @@ import java.io.OutputStream;
 import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 
 public class Database {
@@ -107,7 +106,7 @@ public class Database {
         loadData(ctx, uri, password, keyfile, status, !Importer.DEBUG);
     }
 
-    public void loadData(Context ctx, Uri uri, String password, Uri keyfile, ProgressTaskUpdater status, boolean debug) throws IOException, FileNotFoundException, InvalidDBException {
+    private void loadData(Context ctx, Uri uri, String password, Uri keyfile, ProgressTaskUpdater status, boolean debug) throws IOException, FileNotFoundException, InvalidDBException {
         mUri = uri;
         readOnly = false;
         if (uri.getScheme().equals("file")) {
@@ -115,26 +114,10 @@ public class Database {
             readOnly = !file.canWrite();
         }
 
-        try {
-            passUrisAsInputStreams(ctx, uri, password, keyfile, status, debug, 0);
-        } catch (InvalidPasswordException e) {
-            // Retry with rounds fix
-            try {
-                passUrisAsInputStreams(ctx, uri, password, keyfile, status, debug, getFixRounds(ctx));
-            } catch (Exception e2) {
-                // Rethrow original exception
-                throw e;
-            }
-        }
+        passUrisAsInputStreams(ctx, uri, password, keyfile, status, debug);
     }
 
-    private long getFixRounds(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getLong(ctx.getString(R.string.roundsFix_key), ctx.getResources().getInteger(R.integer.roundsFix_default));
-    }
-
-
-    private void passUrisAsInputStreams(Context ctx, Uri uri, String password, Uri keyfile, ProgressTaskUpdater status, boolean debug, long roundsFix) throws IOException, FileNotFoundException, InvalidDBException {
+    private void passUrisAsInputStreams(Context ctx, Uri uri, String password, Uri keyfile, ProgressTaskUpdater status, boolean debug) throws IOException, FileNotFoundException, InvalidDBException {
         InputStream is, kfIs;
         try {
             is = UriUtil.getUriInputStream(ctx, uri);
@@ -149,14 +132,14 @@ public class Database {
             Log.e("KPD", "Database::loadData", e);
             throw ContentFileNotFoundException.getInstance(keyfile);
         }
-        loadData(ctx, is, password, kfIs, status, debug, roundsFix);
+        loadData(ctx, is, password, kfIs, status, debug);
     }
 
     public void loadData(Context ctx, InputStream is, String password, InputStream keyFileInputStream, boolean debug) throws IOException, InvalidDBException {
-        loadData(ctx, is, password, keyFileInputStream, null, debug, 0);
+        loadData(ctx, is, password, keyFileInputStream, null, debug);
     }
 
-    private void loadData(Context ctx, InputStream is, String password, InputStream keyFileInputStream, ProgressTaskUpdater progressTaskUpdater, boolean debug, long roundsFix) throws IOException, InvalidDBException {
+    private void loadData(Context ctx, InputStream is, String password, InputStream keyFileInputStream, ProgressTaskUpdater progressTaskUpdater, boolean debug) throws IOException, InvalidDBException {
         BufferedInputStream bis = new BufferedInputStream(is);
 
         if ( ! bis.markSupported() ) {
@@ -170,7 +153,7 @@ public class Database {
 
         bis.reset();  // Return to the start
 
-        pm = databaseImporter.openDatabase(bis, password, keyFileInputStream, progressTaskUpdater, roundsFix);
+        pm = databaseImporter.openDatabase(bis, password, keyFileInputStream, progressTaskUpdater);
         if ( pm != null ) {
             try {
                 switch (pm.getVersion()) {
@@ -384,7 +367,7 @@ public class Database {
     public List<KdfEngine> getAvailableKdfEngines() {
         switch (getPwDatabase().getVersion()) {
             case V4:
-                return KdfFactory.kdfList;
+                return KdfFactory.kdfListV4;
             case V3:
                 return KdfFactory.kdfListV3;
         }
@@ -396,10 +379,16 @@ public class Database {
     }
 
     public KdfEngine getKdfEngine() {
-        KdfEngine kdfEngine = getPwDatabase().getKdfEngine();
-        if (kdfEngine == null)
-            return KdfFactory.aesKdf;
-        return kdfEngine;
+        switch (getPwDatabase().getVersion()) {
+            case V4:
+                KdfEngine kdfEngine = ((PwDatabaseV4) getPwDatabase()).getKdfEngine();
+                if (kdfEngine == null)
+                    return KdfFactory.aesKdf;
+                return kdfEngine;
+            default:
+            case V3:
+                return KdfFactory.aesKdf;
+        }
     }
 
     public void assignKdfEngine(KdfEngine kdfEngine) {
@@ -407,7 +396,7 @@ public class Database {
             case V4:
                 PwDatabaseV4 db = ((PwDatabaseV4) getPwDatabase());
                 if (db.getKdfParameters() == null
-                        || !db.getKdfParameters().kdfUUID.equals(kdfEngine.getDefaultParameters().kdfUUID))
+                        || !db.getKdfParameters().getUUID().equals(kdfEngine.getDefaultParameters().getUUID()))
                     db.setKdfParameters(kdfEngine.getDefaultParameters());
                 setNumberKeyEncryptionRounds(kdfEngine.getDefaultKeyRounds());
                 setMemoryUsage(kdfEngine.getDefaultMemoryUsage());
@@ -417,7 +406,7 @@ public class Database {
     }
 
     public String getKeyDerivationName(Resources resources) {
-        KdfEngine kdfEngine = getPwDatabase().getKdfEngine();
+        KdfEngine kdfEngine = getKdfEngine();
         if (kdfEngine != null) {
             return kdfEngine.getName(resources);
         }
@@ -651,6 +640,44 @@ public class Database {
         } catch (Exception e) {
             Log.e(TAG, "This version of PwEntry can't be updated", e);
         }
+    }
+
+    /**
+     * @return A duplicate entry with the same values, a new UUID,
+     * @param entryToCopy
+     * @param newParent
+     */
+    public @Nullable PwEntry copyEntry(PwEntry entryToCopy, PwGroup newParent) {
+        try {
+            // TODO encapsulate
+            switch (getPwDatabase().getVersion()) {
+                case V3:
+                    PwEntryV3 entryV3Copied = ((PwEntryV3) entryToCopy).clone();
+                    entryV3Copied.setUUID(UUID.randomUUID());
+                    entryV3Copied.setParent((PwGroupV3) newParent);
+                    addEntryTo(entryV3Copied, newParent);
+                    return entryV3Copied;
+                case V4:
+                    PwEntryV4 entryV4Copied = ((PwEntryV4) entryToCopy).clone();
+                    entryV4Copied.setUUID(UUID.randomUUID());
+                    entryV4Copied.setParent((PwGroupV4) newParent);
+                    addEntryTo(entryV4Copied, newParent);
+                    return entryV4Copied;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "This version of PwEntry can't be updated", e);
+        }
+        return null;
+    }
+
+    public void moveEntry(PwEntry entryToMove, PwGroup newParent) {
+        removeEntryFrom(entryToMove, entryToMove.parent);
+        addEntryTo(entryToMove, newParent);
+    }
+
+    public void moveGroup(PwGroup groupToMove, PwGroup newParent) {
+        removeGroupFrom(groupToMove, groupToMove.parent);
+        addGroupTo(groupToMove, newParent);
     }
 
     public void deleteEntry(PwEntry entry) {

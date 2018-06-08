@@ -21,7 +21,7 @@
 <resources>
     <string name="about_feedback">משוב:</string>
     <string name="about_homepage">דף הבית:</string>
-    <string name="AboutText">KeePass DX היא תוכנה המממשת את מנהל הסיסמאות KeePass לאנרואיד.</string>
+    <string name="about_description">KeePass DX היא תוכנה המממשת את מנהל הסיסמאות KeePass לאנרואיד.</string>
     <string name="accept">קבל</string>
     <string name="add_entry">הוסף ערך</string>
     <string name="add_group">הוסף קבוצה</string>
@@ -34,7 +34,7 @@
     <string name="brackets">סוגריים</string>
     <string name="browser_intall_text">סייר הקבצים דורש את סייר הקבצים Open Intents, לחץ למטע כדי להתקין. בגלל מספר בעיות בסייר, ייתכן ויהיו בעיות בהפעלה הראשונה.</string>
     <string name="cancel">בטל</string>
-    <string name="ClearClipboard">לוח ההעתקה נוקה.</string>
+    <string name="clipboard_cleared">לוח ההעתקה נוקה.</string>
     <string name="clipboard_error_title">שגיאת לוח ההעתקה</string>
     <string name="clipboard_error">במספר מכשירי אנרואיד מסמסונג קיים באג במימוש לוח ההעתקה שיכול לגרום לבעיות בהעתקה מהיישום. לעוד מידע עבור אל:</string>
     <string name="clipboard_error_clear">ניקוי לוח ההעתקה נכשל</string>

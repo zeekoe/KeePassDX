@@ -22,7 +22,7 @@
   tools:ignore="MissingTranslation">
     <string name="about_feedback">Feedback:</string>
     <string name="about_homepage">Homepage:</string>
-    <string name="AboutText">KeePass DX is an Android implementation of the KeePass password manager.</string>
+    <string name="about_description">KeePass DX is an Android implementation of the KeePass password manager.</string>
     <string name="accept">Accept</string>
     <string name="add_entry">Add entry</string>
     <string name="add_group">Add group</string>
@@ -39,7 +39,7 @@
     <string name="browser_intall_text">File browsing requires the Open Intents File Manager, click below to install it. Due to some quirks in the file manager, browsing may not work correctly, the first time you browse.</string>
     <string name="cancel">Cancel</string>
     <string name="allow">Allow</string>
-    <string name="ClearClipboard">Clipboard cleared.</string>
+    <string name="clipboard_cleared">Clipboard cleared.</string>
     <string name="clipboard_error_title">Clipboard error</string>
     <string name="clipboard_error">Some Samsung Android phones have a bug in the clipboard implementation that causes copying from applications to fail. For more details go to:</string>
     <string name="clipboard_error_clear">Clearing the clipboard failed</string>
@@ -87,6 +87,7 @@
     <string name="error_title_required">A title is required.</string>
     <string name="error_wrong_length">Enter a positive integer on length field</string>
     <string name="error_autofill_enable_service">Autofill service can\'t be enabled.</string>
+    <string name="error_move_folder_in_itself">Unable to move a group in itself.</string>
     <string name="field_name">Field Name</string>
     <string name="field_value">Field value</string>
     <string name="file_not_found">File not found.</string>
@@ -121,9 +122,13 @@
     <string name="menu_app_settings">Application settings</string>
     <string name="menu_form_filling_settings">Form filling</string>
     <string name="menu_db_settings">Database settings</string>
-    <string name="menu_delete">Delete</string>
     <string name="menu_donate">Donate</string>
     <string name="menu_edit">Edit</string>
+    <string name="menu_copy">Copy</string>
+    <string name="menu_move">Move</string>
+    <string name="menu_paste">Paste</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_cancel">Cancel</string>
     <string name="menu_hide_password">Hide Pass</string>
     <string name="menu_lock">Lock Database</string>
     <string name="menu_open">Open</string>
@@ -155,9 +160,6 @@
     <string name="kdf_explanation">In order to generate the key for the encryption algorithm, the compressed master key (SHA-256) is transformed using a key derivation function (with a random salt).</string>
     <string name="rounds">Transform Rounds</string>
     <string name="rounds_explanation">Higher encryption rounds provide additional protection against brute force attacks, but can really slow down loading and saving.</string>
-    <string name="rounds_fix_title">Fix of database</string>
-    <string name="rounds_fix">Key encryption rounds before corruption</string>
-    <string name="rounds_fix_explanation">If your database was corrupted, enter the number of rounds used previously to try to open your database.</string>
     <string name="rounds_hint">rounds</string>
     <string name="memory_usage">Memory Usage</string>
     <string name="memory_usage_explanation">Amount of memory (in binary bytes) to be used by the key derivation function.</string>

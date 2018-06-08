@@ -20,7 +20,7 @@
 <resources>
     <string name="about_feedback">Отзывы:</string>
     <string name="about_homepage">Сайт:</string>
-    <string name="AboutText">KeePass DX является Android-версией программы KeePass Password Safe</string>
+    <string name="about_description">KeePass DX является Android-версией программы KeePass Password Safe</string>
     <string name="accept">Принять</string>
     <string name="add_entry">Новая запись</string>
     <string name="add_group">Новая группа</string>
@@ -34,7 +34,7 @@
     <string name="brackets">{[(Скобки)]}</string>
     <string name="browser_intall_text">Для функции обзора необходим менеджер файлов – например, OI File Manager</string>
     <string name="cancel">Отмена</string>
-    <string name="ClearClipboard">Буфер обмена очищен</string>
+    <string name="clipboard_cleared">Буфер обмена очищен</string>
     <string name="clipboard_error_title">Ошибка буфера обмена</string>
     <string name="clipboard_error">На ряде устройств Samsung буфер обмена содержит ошибку, блокирующую копирование данных из приложений. Подробнее:</string>
     <string name="clipboard_error_clear">Очистка буфера обмена не удалась</string>
@@ -143,8 +143,6 @@
     <string name="root">База</string>
     <string name="rounds">Проходы шифрования</string>
     <string name="rounds_explanation">Больше проходов – выше стойкость базы к подбору пароля, но медленнее открытие и сохранение</string>
-    <string name="rounds_fix">Проходы до поломки базы</string>
-    <string name="rounds_fix_explanation">Если база была повреждена в KeePassDroid 2.2.0.0–2.2.0.6, введите ранее используемое количество проходов шифрования, чтобы открыть её</string>
     <string name="rounds_hint">проходы</string>
     <string name="saving_database">Сохранение базы…</string>
     <string name="space">П р о б е л</string>

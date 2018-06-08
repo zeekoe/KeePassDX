@@ -20,7 +20,7 @@
 <resources>
     <string name="about_feedback">Tilbakemelding:</string>
     <string name="about_homepage">Heimeside:</string>
-    <string name="AboutText">KeePass DX er ei android-utgåve av KeePass passordstyrar.</string>
+    <string name="about_description">KeePass DX er ei android-utgåve av KeePass passordstyrar.</string>
     <string name="accept">Godta</string>    
     <string name="add_entry">Legg til post</string>
     <string name="add_group">Legg til gruppe</string>
@@ -32,7 +32,7 @@
     <string name="brackets">Parentesar</string>
     <string name="browser_intall_text">Du må ha Open Intents filbehandlar for å kunna bla i filer. Klikk nedanfor for å installera han. Grunna nokre småfeil i programmet kan det vera at det ikkje fungerer heilt den første gongen du bruker det.</string>
     <string name="cancel">Avbryt</string>
-    <string name="ClearClipboard">Utklippstavla er tømt.</string>
+    <string name="clipboard_cleared">Utklippstavla er tømt.</string>
     <string name="clipboard_timeout">Tidsavbrot på utklippstavla</string>
     <string name="clipboard_timeout_summary">Tid før utklippstavla blir tømt etter at brukarnamnet eller passordet er kopiert.</string>
     <string name="select_to_copy">Kopier %1$s til utklippstavla</string>
